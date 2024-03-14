@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertical Joystick</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #fff; /* Set initial background color to white */
+    transition: background-color 0.5s ease;
+  }
+  
+  .stick {
+    position: absolute;
+    width: 100%;
+    height: 15%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .bar {
+    position: absolute;
+    width: 100%;
+    height: 5%;
+    opacity: 0.5;
+    background-color: #707070;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+  <div class="stick" id="stick">
+    <div class="bar"></div>
+  </div>
+</div>
+
+<script>
+  const container = document.getElementById('container');
+  const stick = document.getElementById('stick');
+
+  stick.addEventListener('mousedown', (e) => {
+    document.addEventListener('mousemove', handleMouseMove);
+  });
+
+  function handleMouseMove(e) {
+    const rect = container.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+    let posY = e.clientY - centerY;
+    const maxDistance = rect.height / 2;
+
+    if (Math.abs(posY) > maxDistance) {
+      posY = Math.sign(posY) * maxDistance;
+    }
+
+    stick.style.transform = `translate(-50%, ${posY}px)`;
+
+    const opacity = Math.abs(posY) / maxDistance;
+    const color = posY > 0 ? `rgba(255, 192, 203, ${opacity})` : `rgba(144, 238, 144, ${opacity})`;
+    container.style.backgroundColor = color;
+  }
+
+  document.addEventListener('mouseup', () => {
+    document.removeEventListener('mousemove', handleMouseMove);
+    stick.style.transition = 'all 0.2s ease';
+    stick.style.transform = 'translate(-50%, -50%)';
+    container.style.transition = 'background-color 0.5s ease';
+    container.style.backgroundColor = '#fff'; /* Reset background color to white */
+  });
+</script>
+
+</body>
+</html>
